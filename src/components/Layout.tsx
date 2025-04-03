@@ -105,7 +105,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 height={40}
                 className="rounded-full"
               />
-              <span className="text-gray-700">Carolyn Perkins</span>
+              <span className="text-gray-700">Admin</span>
             </div>
 
             {/* Dropdown Menu */}

@@ -34,9 +34,9 @@ export default function LoginPage() {
             height={40}
             className="mb-8"
           />
-          <p className="text-lg font-medium">
-            TBD comes with a complete set of UI components crafted with Tailwind CSS.
-          </p>
+            <p className="text-lg font-medium">
+            Manage and streamline your Spring Boot application configurations effortlessly with Rapid Config Server.
+            </p>
         </div>
         <div>
           <div className="flex items-center gap-4 mb-4">
@@ -48,12 +48,12 @@ export default function LoginPage() {
               className="rounded-full"
             />
             <div>
-              <p className="font-semibold">Brittany Hale</p>
-              <p className="text-sm">CTO, TBD</p>
+              <p className="font-semibold">Samuel Guardado</p>
+              <p className="text-sm">CTO, SaguroDev</p>
             </div>
           </div>
           <p className="text-sm">
-            Copyright © 2025 <span className="font-semibold">TBD</span>
+            Copyright © 2025 <span className="font-semibold">SaguroDev</span>
           </p>
         </div>
       </div>
