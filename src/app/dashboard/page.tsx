@@ -35,8 +35,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <Layout>
-      <div className="bg-white shadow-md rounded-lg p-6">
+    <div className="bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">Dashboard Overview</h1>
         <p className="text-gray-600 mb-6">
           Welcome to the dashboard! Below is a graphical representation of the data for organizations and applications.
@@ -46,6 +45,5 @@ export default function DashboardPage() {
           <Bar data={data} options={options} />
         </div>
       </div>
-    </Layout>
   );
 }

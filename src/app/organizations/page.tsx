@@ -67,7 +67,7 @@ const OrganizationsPage = () => {
   };
 
   return (
-    <Layout>
+
       <div className="bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Organizaciones</h1>
 
@@ -148,7 +148,6 @@ const OrganizationsPage = () => {
           </tbody>
         </table>
       </div>
-    </Layout>
   );
 };
 

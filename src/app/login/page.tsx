@@ -28,10 +28,10 @@ export default function LoginPage() {
       <div className="hidden lg:flex flex-col justify-between bg-blue-600 text-white p-8 w-1/3">
         <div>
           <Image
-            src="/springconfig.png" // Cambia esto por la imagen springconfig.png
+            src="/rapidconfigserver.png" // Cambia esto por la imagen rapidconfigserver.png
             alt="Spring Config Logo"
-            width={120}
-            height={40}
+            width={360}
+            height={140}
             className="mb-8"
           />
             <p className="text-lg font-medium">
@@ -39,19 +39,6 @@ export default function LoginPage() {
             </p>
         </div>
         <div>
-          <div className="flex items-center gap-4 mb-4">
-            <Image
-              src="/springconfig.png" // Cambia esto por la imagen springconfig.png
-              alt="User Avatar"
-              width={50}
-              height={50}
-              className="rounded-full"
-            />
-            <div>
-              <p className="font-semibold">Samuel Guardado</p>
-              <p className="text-sm">CTO, SaguroDev</p>
-            </div>
-          </div>
           <p className="text-sm">
             Copyright © 2025 <span className="font-semibold">SaguroDev</span>
           </p>

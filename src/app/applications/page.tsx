@@ -108,7 +108,6 @@ const ApplicationsPage = () => {
   };
 
   return (
-    <Layout>
       <div className="bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Applications</h1>
 
@@ -183,7 +182,6 @@ const ApplicationsPage = () => {
           </>
         )}
       </div>
-    </Layout>
   );
 };
 
