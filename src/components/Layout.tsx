@@ -29,8 +29,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Image
             src="/baserapidconfigserver.png" // Cambia esto por el logo de tu aplicación
             alt="Logo"
-            width={220}
-            height={80}
+            width={180}
+            height={70}
             className="mb-8"
           />
 
@@ -106,7 +106,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               onClick={() => setMenuOpen(!menuOpen)}
             >
               <Image
-                src="/springconfig.png" // Cambia esto por la imagen del usuario
+                src="/UserAvatar.png" // Cambia esto por la imagen del usuario
                 alt="User Avatar"
                 width={40}
                 height={40}

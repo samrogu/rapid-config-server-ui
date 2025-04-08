@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import apiRoutes from '@/apiRoutes'; // Importa las rutas de la API
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -10,15 +11,31 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simulación de autenticación
-    if (username === 'admin' && password === 'password') {
-      localStorage.setItem('isAuthenticated', 'true'); // Guardar autenticación en localStorage
-      router.push('/dashboard'); // Redirigir al dashboard
-    } else {
-      setError('Invalid username or password');
+    try {
+      const response = await fetch(apiRoutes.auth.login, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid username or password');
+      }
+
+      const data = await response.json();
+
+      // Guarda el token en localStorage
+      localStorage.setItem('token', data.token);
+
+      // Redirige al dashboard
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during login');
     }
   };
 
@@ -34,9 +51,9 @@ export default function LoginPage() {
             height={140}
             className="mb-8"
           />
-            <p className="text-lg font-medium">
+          <p className="text-lg font-medium">
             Manage and streamline your Spring Boot application configurations effortlessly with Rapid Config Server.
-            </p>
+          </p>
         </div>
         <div>
           <p className="text-sm">
