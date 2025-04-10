@@ -1,33 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '@/axiosConfig'; // Importa la configuración de Axios
 import apiRoutes from '@/apiRoutes'; // Importa las rutas de la API
 
 const OrganizationsPage = () => {
   const [organizations, setOrganizations] = useState([]);
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [editingOrg, setEditingOrg] = useState(null);
-  const [token, setToken] = useState<string | null>(null); // Estado para almacenar el token
-
-  // Obtener el token de localStorage en el cliente
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    setToken(storedToken);
-  }, []);
-
-  // Configuración de Axios con el token
-  const axiosConfig = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
 
   // Fetch organizations
   const fetchOrganizations = async () => {
     try {
-      if (!token) return; // Espera a que el token esté disponible
-      const response = await axios.get(apiRoutes.organizations.base, axiosConfig);
+      const response = await axios.get(apiRoutes.organizations.base);
       setOrganizations(response.data);
     } catch (error) {
       console.error('Error fetching organizations:', error);
@@ -36,7 +21,7 @@ const OrganizationsPage = () => {
 
   useEffect(() => {
     fetchOrganizations();
-  }, [token]); // Ejecuta fetchOrganizations cuando el token esté disponible
+  }, []);
 
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,12 +37,11 @@ const OrganizationsPage = () => {
         // Update organization
         await axios.put(
           `${apiRoutes.organizations.base}/${editingOrg.id}`,
-          formData,
-          axiosConfig
+          formData
         );
       } else {
         // Create organization
-        await axios.post(apiRoutes.organizations.base, formData, axiosConfig);
+        await axios.post(apiRoutes.organizations.base, formData);
       }
       setFormData({ name: '', description: '' });
       setEditingOrg(null);
@@ -70,7 +54,7 @@ const OrganizationsPage = () => {
   // Delete organization
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`${apiRoutes.organizations.base}/${id}`, axiosConfig);
+      await axios.delete(`${apiRoutes.organizations.base}/${id}`);
       fetchOrganizations();
     } catch (error) {
       console.error('Error deleting organization:', error);
