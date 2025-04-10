@@ -7,6 +7,7 @@ import Link from 'next/link';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false); // Estado para el submenú de Admin
   const router = useRouter();
   const pathname = usePathname(); // Obtiene la ruta actual
 
@@ -89,6 +90,63 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </svg>
                   <span className="ms-3">Applications</span>
                 </Link>
+              </li>
+              {/* Admin Menu */}
+              <li>
+                <button
+                  onClick={() => setAdminMenuOpen(!adminMenuOpen)}
+                  className="flex items-center justify-between w-full p-2 text-white rounded-lg hover:bg-blue-700 hover:text-white group"
+                >
+                  <div className="flex items-center">
+                    {/* Ícono de engranaje */}
+                    <svg
+                      className="w-5 h-5 text-white transition duration-75 group-hover:text-white"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 1a2 2 0 0 1 2 2v.465a8.035 8.035 0 0 1 2.05.846l.33-.33a2 2 0 0 1 2.828 0l1.414 1.414a2 2 0 0 1 0 2.828l-.33.33a8.035 8.035 0 0 1 .846 2.05H21a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-.465a8.035 8.035 0 0 1-.846 2.05l.33.33a2 2 0 0 1 0 2.828l-1.414 1.414a2 2 0 0 1-2.828 0l-.33-.33a8.035 8.035 0 0 1-2.05.846V21a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-.465a8.035 8.035 0 0 1-2.05-.846l-.33.33a2 2 0 0 1-2.828 0l-1.414-1.414a2 2 0 0 1 0-2.828l.33-.33a8.035 8.035 0 0 1-.846-2.05H3a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h.465a8.035 8.035 0 0 1 .846-2.05l-.33-.33a2 2 0 0 1 0-2.828L5.395 4.28a2 2 0 0 1 2.828 0l.33.33A8.035 8.035 0 0 1 10.605 3.465V3a2 2 0 0 1 2-2h2Zm-2 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
+                    </svg>
+                    <span className="ms-3">Admin</span>
+                  </div>
+                  <svg
+                    className={`w-4 h-4 transition-transform ${
+                      adminMenuOpen ? 'rotate-180' : ''
+                    }`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {adminMenuOpen && (
+                  <ul className="pl-6 mt-2 space-y-2">
+                    <li>
+                      <Link
+                        href="/admin/users"
+                        className="flex items-center p-2 text-white rounded-lg hover:bg-blue-700 hover:text-white group"
+                      >
+                        Users
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/admin/roles"
+                        className="flex items-center p-2 text-white rounded-lg hover:bg-blue-700 hover:text-white group"
+                      >
+                        Roles
+                      </Link>
+                    </li>
+                  </ul>
+                )}
               </li>
             </ul>
           </nav>
