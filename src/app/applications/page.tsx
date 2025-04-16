@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import apiRoutes from '@/apiRoutes'; // Importa las rutas de la API
-import ApplicationForm from '@/app/applications/ApplicationForm/ApplicationForm';
+import axiosInstance from '@/axiosConfig';
+import apiRoutes from '@/apiRoutes';
+import ApplicationForm from './ApplicationForm';
+import ApplicationTable from './ApplicationTable';
 
 const ApplicationsPage = () => {
   const [applications, setApplications] = useState([]);
@@ -21,30 +22,16 @@ const ApplicationsPage = () => {
     vaultToken: '',
     appRoleId: '',
     appRoleSecret: '',
+    vaultEnabled: false,
     organizationId: '',
   });
   const [editingApp, setEditingApp] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [token, setToken] = useState<string | null>(null); // Estado para almacenar el token
-
-  // Obtener el token de localStorage en el cliente
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    setToken(storedToken);
-  }, []);
-
-  // Configuración de Axios con el token
-  const axiosConfig = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
 
   // Fetch organizations
   const fetchOrganizations = async () => {
     try {
-      if (!token) return; // Espera a que el token esté disponible
-      const response = await axios.get(apiRoutes.organizations.base, axiosConfig);
+      const response = await axiosInstance.get(apiRoutes.organizations.base);
       setOrganizations(response.data);
     } catch (error) {
       console.error('Error fetching organizations:', error);
@@ -54,10 +41,8 @@ const ApplicationsPage = () => {
   // Fetch applications
   const fetchApplications = async (organizationId: string) => {
     try {
-      if (!token) return; // Espera a que el token esté disponible
-      const response = await axios.get(
-        apiRoutes.applications.byOrganization(organizationId),
-        axiosConfig
+      const response = await axiosInstance.get(
+        apiRoutes.applications.byOrganization(organizationId)
       );
       setApplications(response.data);
     } catch (error) {
@@ -67,7 +52,7 @@ const ApplicationsPage = () => {
 
   useEffect(() => {
     fetchOrganizations();
-  }, [token]); // Ejecuta fetchOrganizations cuando el token esté disponible
+  }, []);
 
   useEffect(() => {
     if (selectedOrganization) {
@@ -75,7 +60,7 @@ const ApplicationsPage = () => {
     } else {
       setApplications([]);
     }
-  }, [selectedOrganization, token]); // Ejecuta fetchApplications cuando cambie la organización o el token
+  }, [selectedOrganization]);
 
   const handleCreate = () => {
     if (!selectedOrganization) {
@@ -94,6 +79,7 @@ const ApplicationsPage = () => {
       vaultToken: '',
       appRoleId: '',
       appRoleSecret: '',
+      vaultEnabled: false,
       organizationId: selectedOrganization,
     });
     setShowForm(true);
@@ -101,6 +87,7 @@ const ApplicationsPage = () => {
 
   const handleEdit = (app: any) => {
     setFormData(app);
+    setEditingApp(app);
     setShowForm(true);
   };
 
@@ -113,15 +100,12 @@ const ApplicationsPage = () => {
     e.preventDefault();
     try {
       if (editingApp) {
-        // Update application
-        await axios.put(
+        await axiosInstance.put(
           `${apiRoutes.applications.base}/${editingApp.id}`,
-          formData,
-          axiosConfig
+          formData
         );
       } else {
-        // Create application
-        await axios.post(apiRoutes.applications.base, formData, axiosConfig);
+        await axiosInstance.post(apiRoutes.applications.base + "/organization/"+selectedOrganization, formData);
       }
       setShowForm(false);
       fetchApplications(selectedOrganization);
@@ -132,7 +116,7 @@ const ApplicationsPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`${apiRoutes.applications.base}/${id}`, axiosConfig);
+      await axiosInstance.delete(`${apiRoutes.applications.base}/${id}`);
       fetchApplications(selectedOrganization);
     } catch (error) {
       console.error('Error deleting application:', error);
@@ -164,7 +148,6 @@ const ApplicationsPage = () => {
       {/* Show Form or Table */}
       {showForm ? (
         <ApplicationForm
-          selectedOrganization={selectedOrganization}
           formData={formData}
           setFormData={setFormData}
           onSubmit={handleSubmit}
@@ -178,39 +161,11 @@ const ApplicationsPage = () => {
           >
             Create Application
           </button>
-          <table className="w-full border-collapse border border-gray-300 rounded-lg">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 p-2 text-left font-bold text-gray-900">Name</th>
-                <th className="border border-gray-300 p-2 text-left font-bold text-gray-900">Description</th>
-                <th className="border border-gray-300 p-2 text-left font-bold text-gray-900">URI</th>
-                <th className="border border-gray-300 p-2 text-left font-bold text-gray-900">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map((app: any) => (
-                <tr key={app.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-2 text-gray-900">{app.name}</td>
-                  <td className="border border-gray-300 p-2 text-gray-900">{app.description}</td>
-                  <td className="border border-gray-300 p-2 text-gray-900">{app.uri}</td>
-                  <td className="border border-gray-300 p-2">
-                    <button
-                      onClick={() => handleEdit(app)}
-                      className="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600 mr-2"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(app.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ApplicationTable
+            applications={applications}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         </>
       )}
     </div>

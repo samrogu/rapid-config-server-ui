@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 
 const axiosInstance = axios.create();
 
-// Configurar el interceptor
+// Configurar el interceptor de solicitudes
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token'); // Obtén el token de localStorage
@@ -21,10 +21,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response, // Si la respuesta es exitosa, simplemente la retornamos
   (error) => {
-    if (error.response?.status === 401) {
-      // Si el token está vencido o no es válido, redirigimos al inicio de sesión
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      // Si el token está vencido, no es válido o no tiene permisos, redirigimos al login
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('token'); // Eliminamos el token vencido
+        localStorage.removeItem('token'); // Eliminamos el token inválido
         window.location.href = '/login'; // Redirigimos al inicio de sesión
       }
     }
