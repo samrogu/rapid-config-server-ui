@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import axiosInstance from '@/axiosConfig'; // Importa la configuración de Axios
 import apiRoutes from '@/apiRoutes';
-import OrganizationForm from './OrganizationForm';
-import OrganizationTable from './OrganizationTable';
+import { useRouter } from 'next/navigation';
 
 const OrganizationsPage = () => {
   const [organizations, setOrganizations] = useState([]);
-  const [formData, setFormData] = useState({ name: '', description: '' });
-  const [editingOrg, setEditingOrg] = useState(null);
+  const [formVisible, setFormVisible] = useState(false);
+  const [newOrganization, setNewOrganization] = useState({ name: '' }); // Estado para el formulario
+  const router = useRouter();
 
   // Fetch organizations
   const fetchOrganizations = async () => {
@@ -25,63 +25,100 @@ const OrganizationsPage = () => {
     fetchOrganizations();
   }, []);
 
-  // Create or update organization
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleViewApplications = (organizationId: string) => {
+    router.push(`/organizations/${organizationId}`);
+  };
+
+  const handleAddOrganization = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (editingOrg) {
-        // Update organization
-        await axiosInstance.put(
-          `${apiRoutes.organizations.base}/${editingOrg.id}`,
-          formData
-        );
-      } else {
-        // Create organization
-        await axiosInstance.post(apiRoutes.organizations.base, formData);
-      }
-      setFormData({ name: '', description: '' });
-      setEditingOrg(null);
-      fetchOrganizations();
+      await axiosInstance.post(apiRoutes.organizations.base, newOrganization);
+      setFormVisible(false); // Ocultar el formulario
+      setNewOrganization({ name: '' }); // Reiniciar el formulario
+      fetchOrganizations(); // Refrescar la lista de organizaciones
     } catch (error) {
-      console.error('Error saving organization:', error);
+      console.error('Error adding organization:', error);
     }
-  };
-
-  // Delete organization
-  const handleDelete = async (id: string) => {
-    try {
-      await axiosInstance.delete(`${apiRoutes.organizations.base}/${id}`);
-      fetchOrganizations();
-    } catch (error) {
-      console.error('Error deleting organization:', error);
-    }
-  };
-
-  // Set organization for editing
-  const handleEdit = (org: any) => {
-    setEditingOrg(org);
-    setFormData({ name: org.name, description: org.description });
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Organizaciones</h1>
+    <div className="bg-gray-900 text-gray-200 p-6 rounded-lg shadow-md">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Organizations</h1>
+        <button
+          onClick={() => setFormVisible(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
+          Add organization
+        </button>
+      </div>
 
-      {/* Formulario */}
-      <OrganizationForm
-        formData={formData}
-        setFormData={setFormData}
-        editingOrg={editingOrg}
-        setEditingOrg={setEditingOrg}
-        onSubmit={handleSubmit}
-      />
+      {/* Add Organization Form */}
+      {formVisible && (
+        <div className="mb-6 bg-gray-800 p-4 rounded-lg">
+          <h2 className="text-xl font-bold mb-4">Add Organization</h2>
+          <form onSubmit={handleAddOrganization} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-bold mb-2">
+                Organization Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={newOrganization.name}
+                onChange={(e) => setNewOrganization({ ...newOrganization, name: e.target.value })}
+                className="w-full bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+            <div className="flex space-x-4">
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormVisible(false)}
+                className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
-      {/* Tabla */}
-      <OrganizationTable
-        organizations={organizations}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border border-gray-700 rounded-lg">
+          <thead>
+            <tr className="bg-gray-800">
+              <th className="border border-gray-700 p-3 text-left font-bold">Name</th>
+              <th className="border border-gray-700 p-3 text-left font-bold">Applications</th>
+              <th className="border border-gray-700 p-3 text-left font-bold">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {organizations.map((org: any) => (
+              <tr key={org.id} className="hover:bg-gray-700">
+                <td className="border border-gray-700 p-3">{org.name}</td>
+                <td className="border border-gray-700 p-3">{org.applicationsCount || 0}</td>
+                <td className="border border-gray-700 p-3">
+                  <button
+                    onClick={() => handleViewApplications(org.id)}
+                    className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
