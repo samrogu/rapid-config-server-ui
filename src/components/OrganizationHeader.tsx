@@ -1,29 +1,24 @@
+'use client';
+
+import { Menu } from '@headlessui/react';
+import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+
 const OrganizationHeader = ({
   name,
-  onEdit,
-  onDelete,
+  children,
 }: {
   name: string;
-  onEdit: () => void;
-  onDelete: () => void;
+  children?: React.ReactNode; // Permite pasar contenido adicional como el menú Kebab
 }) => {
   return (
-    <div className="flex justify-between items-center mb-6">
-      <h1 className="text-2xl font-bold">{name}</h1>
-      <div className="space-x-2">
-        <button
-          onClick={onEdit}
-          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
-        >
-          Edit
-        </button>
-        <button
-          onClick={onDelete}
-          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-        >
-          Delete
-        </button>
+    <div className="flex items-center justify-between mb-6">
+      {/* Contenedor del título */}
+      <div className="flex-1">
+        <h1 className="text-2xl font-bold">{name}</h1>
       </div>
+
+      {/* Contenedor para contenido adicional */}
+      {children}
     </div>
   );
 };

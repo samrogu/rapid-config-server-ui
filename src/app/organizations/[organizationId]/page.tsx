@@ -10,6 +10,9 @@ import TabNavigation from '@/components/TabNavigation';
 import ApplicationsTable from '@/components/ApplicationsTable';
 import UsersTable from '@/components/UsersTable';
 import ConfirmModal from '@/components/ConfirmModal';
+import ApplicationForm from '@/components/ApplicationForm';
+import { Menu } from '@headlessui/react';
+import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
 
 const OrganizationDetailsPage = () => {
   const { organizationId } = useParams();
@@ -19,9 +22,13 @@ const OrganizationDetailsPage = () => {
   const [applications, setApplications] = useState([]);
   const [users, setUsers] = useState([]);
   const [activeTab, setActiveTab] = useState<'applications' | 'users'>('applications');
-  const [isEditing, setIsEditing] = useState(false); // Estado para el formulario de edición
-  const [editFormData, setEditFormData] = useState({ name: '' }); // Datos del formulario de edición
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Estado para el modal de confirmación
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFormData, setEditFormData] = useState({ name: '' });
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isApplicationFormOpen, setIsApplicationFormOpen] = useState(false);
+  const [applicationFormData, setApplicationFormData] = useState({ name: '', description: '' });
+  const [isAddingApplication, setIsAddingApplication] = useState(false);
+  const [isEditingApplication, setIsEditingApplication] = useState(false);
 
   // Fetch organization details
   const fetchOrganizationDetails = async () => {
@@ -50,7 +57,7 @@ const OrganizationDetailsPage = () => {
     try {
       await axiosInstance.put(`${apiRoutes.organizations.base}/${organizationId}`, editFormData);
       setIsEditing(false);
-      fetchOrganizationDetails(); // Refrescar los datos de la organización
+      fetchOrganizationDetails();
     } catch (error) {
       console.error('Error updating organization:', error);
     }
@@ -60,9 +67,35 @@ const OrganizationDetailsPage = () => {
   const handleDeleteClick = async () => {
     try {
       await axiosInstance.delete(`${apiRoutes.organizations.base}/${organizationId}`);
-      router.push('/organizations'); // Redirigir a la lista de organizaciones
+      router.push('/organizations');
     } catch (error) {
       console.error('Error deleting organization:', error);
+    }
+  };
+
+  // Handle Add Application
+  const handleAddApplication = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axiosInstance.post(`${apiRoutes.organizations.base}/${organizationId}/applications`, applicationFormData);
+      setIsApplicationFormOpen(false);
+      setApplicationFormData({ name: '', description: '' });
+      fetchOrganizationDetails();
+    } catch (error) {
+      console.error('Error adding application:', error);
+    }
+  };
+
+  // Handle Edit Application
+  const handleEditApplication = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axiosInstance.put(`${apiRoutes.organizations.base}/${organizationId}/applications/${applicationFormData.id}`, applicationFormData);
+      setIsEditingApplication(false);
+      setApplicationFormData({ name: '', description: '' });
+      fetchOrganizationDetails();
+    } catch (error) {
+      console.error('Error editing application:', error);
     }
   };
 
@@ -101,11 +134,43 @@ const OrganizationDetailsPage = () => {
           </button>
         </form>
       ) : (
-        <OrganizationHeader
-          name={organization?.name}
-          onEdit={handleEditClick}
-          onDelete={() => setIsConfirmModalOpen(true)} // Abrir el modal de confirmación
-        />
+        <div className="flex justify-between items-center mb-6">
+          <OrganizationHeader name={organization?.name} />
+          {/* Kebab Menu */}
+          <Menu as="div" className="relative">
+            <Menu.Button className="p-2 rounded-full hover:bg-gray-800">
+              <EllipsisVerticalIcon className="h-6 w-6 text-gray-400" />
+            </Menu.Button>
+            <Menu.Items className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div className="py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      onClick={handleEditClick}
+                      className={`${
+                        active ? 'bg-gray-700' : ''
+                      } block w-full text-left px-4 py-2 text-sm text-gray-200`}
+                    >
+                      Edit
+                    </button>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      onClick={() => setIsConfirmModalOpen(true)}
+                      className={`${
+                        active ? 'bg-gray-700' : ''
+                      } block w-full text-left px-4 py-2 text-sm text-gray-200`}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </Menu.Item>
+              </div>
+            </Menu.Items>
+          </Menu>
+        </div>
       )}
 
       {/* Tab Navigation */}
@@ -120,11 +185,38 @@ const OrganizationDetailsPage = () => {
 
       {/* Tab Content */}
       {activeTab === 'applications' ? (
-        <ApplicationsTable
-          applications={applications}
-          onAdd={() => console.log('Add application')}
-          onEdit={(id) => console.log(`Edit application ${id}`)}
-        />
+        isAddingApplication || isEditingApplication ? (
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg font-bold text-white mb-4">
+              {isEditingApplication ? 'Edit Application' : 'Add Application'}
+            </h2>
+            <ApplicationForm
+              formData={applicationFormData}
+              setFormData={setApplicationFormData}
+              onSubmit={isEditingApplication ? handleEditApplication : handleAddApplication}
+              onCancel={() => {
+                setIsAddingApplication(false);
+                setIsEditingApplication(false);
+                setApplicationFormData({ name: '', description: '' });
+              }}
+            />
+          </div>
+        ) : (
+          <ApplicationsTable
+            applications={applications}
+            onAdd={() => {
+              setIsAddingApplication(true);
+              setApplicationFormData({ name: '', description: '' });
+            }}
+            onEdit={(id) => {
+              const appToEdit = applications.find((app) => app.id === id);
+              if (appToEdit) {
+                setIsEditingApplication(true);
+                setApplicationFormData({ name: appToEdit.name, description: appToEdit.description });
+              }
+            }}
+          />
+        )
       ) : (
         <UsersTable
           users={users}
@@ -141,6 +233,20 @@ const OrganizationDetailsPage = () => {
         title="Delete Organization"
         message="Are you sure you want to delete this organization? This action cannot be undone."
       />
+
+      {/* Application Form */}
+      {isApplicationFormOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg font-bold text-white mb-4">Add Application</h2>
+            <ApplicationForm
+              formData={applicationFormData}
+              setFormData={setApplicationFormData}
+              onSubmit={handleAddApplication}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
