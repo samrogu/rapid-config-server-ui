@@ -7,12 +7,12 @@ import apiRoutes from '@/apiRoutes';
 import Breadcrumb from '@/components/Breadcrumb';
 import OrganizationHeader from '@/components/OrganizationHeader';
 import TabNavigation from '@/components/TabNavigation';
-import ApplicationsTable from '@/components/ApplicationsTable';
 import UsersTable from '@/components/UsersTable';
 import ConfirmModal from '@/components/ConfirmModal';
 import ApplicationForm from '@/components/ApplicationForm';
 import { Menu } from '@headlessui/react';
 import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import ApplicationTable from '@/components/ApplicationTable';
 
 const OrganizationDetailsPage = () => {
   const { organizationId } = useParams();
@@ -75,11 +75,18 @@ const OrganizationDetailsPage = () => {
 
   // Handle Add Application
   const handleAddApplication = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevenir el comportamiento predeterminado del formulario
     try {
-      await axiosInstance.post(`${apiRoutes.organizations.base}/${organizationId}/applications`, applicationFormData);
-      setIsApplicationFormOpen(false);
-      setApplicationFormData({ name: '', description: '' });
+      // Enviar la solicitud para agregar la aplicación
+      await axiosInstance.post(`${apiRoutes.applications.base}/organization/${organizationId}`, applicationFormData);
+
+      // Actualizar el estado para salir del modo de adición
+      setIsAddingApplication(false);
+
+      // Reiniciar el formulario
+      setApplicationFormData({ name: '', description: '', uri: '', profile: '', label: '', enabled: false });
+
+      // Refrescar la lista de aplicaciones
       fetchOrganizationDetails();
     } catch (error) {
       console.error('Error adding application:', error);
@@ -87,15 +94,36 @@ const OrganizationDetailsPage = () => {
   };
 
   // Handle Edit Application
-  const handleEditApplication = async (e: React.FormEvent) => {
+  const handleEditApplication = (app: any) => {
+    console.log('Editing application:', app);
+
+    // Configurar los datos de la aplicación seleccionada directamente
+    setApplicationFormData(app);
+
+    // Activar el modo de edición
+    setIsEditingApplication(true);
+  };
+
+  // Handle Edit Application Submit
+  const handleEditApplicationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axiosInstance.put(`${apiRoutes.organizations.base}/${organizationId}/applications/${applicationFormData.id}`, applicationFormData);
-      setIsEditingApplication(false);
-      setApplicationFormData({ name: '', description: '' });
-      fetchOrganizationDetails();
+      await axiosInstance.put(`${apiRoutes.applications.base}/${applicationFormData.id}`, applicationFormData);
+      setIsEditingApplication(false); // Salir del modo de edición
+      setApplicationFormData({ name: '', description: '' }); // Reiniciar el formulario
+      fetchOrganizationDetails(); // Refrescar la lista de aplicaciones
     } catch (error) {
       console.error('Error editing application:', error);
+    }
+  };
+
+  // Handle Delete Application
+  const handleDeleteApplication = async (id: string) => {
+    try {
+      await axiosInstance.delete(`${apiRoutes.applications.base}/${id}`);
+      fetchOrganizationDetails(); // Refrescar la lista de aplicaciones
+    } catch (error) {
+      console.error('Error deleting application:', error);
     }
   };
 
@@ -193,7 +221,7 @@ const OrganizationDetailsPage = () => {
             <ApplicationForm
               formData={applicationFormData}
               setFormData={setApplicationFormData}
-              onSubmit={isEditingApplication ? handleEditApplication : handleAddApplication}
+              onSubmit={isEditingApplication ? handleEditApplicationSubmit : handleAddApplication}
               onCancel={() => {
                 setIsAddingApplication(false);
                 setIsEditingApplication(false);
@@ -202,20 +230,25 @@ const OrganizationDetailsPage = () => {
             />
           </div>
         ) : (
-          <ApplicationsTable
-            applications={applications}
-            onAdd={() => {
-              setIsAddingApplication(true);
-              setApplicationFormData({ name: '', description: '' });
-            }}
-            onEdit={(id) => {
-              const appToEdit = applications.find((app) => app.id === id);
-              if (appToEdit) {
-                setIsEditingApplication(true);
-                setApplicationFormData({ name: appToEdit.name, description: appToEdit.description });
-              }
-            }}
-          />
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-white">Applications</h2>
+              <button
+                onClick={() => {
+                  setIsAddingApplication(true);
+                  setApplicationFormData({ name: '', description: '' }); // Reiniciar el formulario
+                }}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+              >
+                Add Application
+              </button>
+            </div>
+            <ApplicationTable
+              applications={applications}
+              onEdit={handleEditApplication}
+              onDelete={handleDeleteApplication}
+            />
+          </div>
         )
       ) : (
         <UsersTable
