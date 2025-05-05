@@ -29,6 +29,8 @@ const OrganizationDetailsPage = () => {
   const [applicationFormData, setApplicationFormData] = useState({ name: '', description: '' });
   const [isAddingApplication, setIsAddingApplication] = useState(false);
   const [isEditingApplication, setIsEditingApplication] = useState(false);
+  const [isDeleteApplicationModalOpen, setIsDeleteApplicationModalOpen] = useState(false);
+  const [applicationToDelete, setApplicationToDelete] = useState<any>(null);
 
   // Fetch organization details
   const fetchOrganizationDetails = async () => {
@@ -118,10 +120,18 @@ const OrganizationDetailsPage = () => {
   };
 
   // Handle Delete Application
-  const handleDeleteApplication = async (id: string) => {
+  const handleDeleteApplication = (app: any) => {
+    setApplicationToDelete(app);
+    setIsDeleteApplicationModalOpen(true);
+  };
+
+  // Confirm Delete Application
+  const confirmDeleteApplication = async () => {
     try {
-      await axiosInstance.delete(`${apiRoutes.applications.base}/${id}`);
-      fetchOrganizationDetails(); // Refrescar la lista de aplicaciones
+      await axiosInstance.delete(`${apiRoutes.applications.base}/${applicationToDelete.id}`);
+      setIsDeleteApplicationModalOpen(false);
+      setApplicationToDelete(null);
+      fetchOrganizationDetails();
     } catch (error) {
       console.error('Error deleting application:', error);
     }
@@ -264,7 +274,40 @@ const OrganizationDetailsPage = () => {
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleDeleteClick}
         title="Delete Organization"
-        message="Are you sure you want to delete this organization? This action cannot be undone."
+        message="Are you sure you want to delete this organization? This action cannot be undone." confirmText={''} confirmButtonClass={''}      />
+
+      <ConfirmModal
+        isOpen={isDeleteApplicationModalOpen}
+        onClose={() => {
+          setIsDeleteApplicationModalOpen(false);
+          setApplicationToDelete(null);
+        }}
+        onConfirm={confirmDeleteApplication}
+        title="Delete Application"
+        message={
+          <div className="space-y-4">
+            <div className="text-gray-300">
+              Are you sure you want to delete the application{' '}
+              <span className="font-semibold text-white">
+                {applicationToDelete?.name}
+              </span>
+              ?
+            </div>
+            <div className="bg-gray-700/50 rounded-lg p-4 text-sm text-gray-300">
+              <div>This action will:</div>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Remove all application configurations</li>
+                <li>Delete all associated settings</li>
+                <li>Remove access for all users</li>
+              </ul>
+            </div>
+            <div className="text-red-400 text-sm">
+              This action cannot be undone.
+            </div>
+          </div>
+        }
+        confirmText="Delete Application"
+        confirmButtonClass="bg-red-600 hover:bg-red-700 focus:ring-red-500"
       />
 
       {/* Application Form */}
