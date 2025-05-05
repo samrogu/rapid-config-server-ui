@@ -128,6 +128,23 @@ const ApplicationForm = ({ formData, setFormData, onSubmit, onCancel }: any) => 
         {/* Campos adicionales si Vault está habilitado */}
         {formData.vaultEnabled && (
           <>
+            {/* Campo Vault URL */}
+            <div>
+              <label htmlFor="vaultUrl" className="block text-sm font-medium text-gray-300 mb-1">
+                Vault URL
+              </label>
+              <input
+                type="text"
+                id="vaultUrl"
+                name="vaultUrl"
+                placeholder="Enter Vault URL"
+                value={formData.vaultUrl || ''}
+                onChange={handleInputChange}
+                className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
             <div>
               <label htmlFor="vaultAuthMethod" className="block text-sm font-medium text-gray-300 mb-1">
                 Vault Auth Method
