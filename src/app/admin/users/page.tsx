@@ -93,29 +93,39 @@ const UsersPage = () => {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Users</h1>
-      {showForm ? (
-        <UserForm
-          formData={formData}
-          setFormData={setFormData}
-          roles={roles} // Pasar los roles al formulario
-          onSubmit={handleSubmit}
-          onCancel={() => {
-            setShowForm(false);
-            setEditingUser(null);
-          }}
-        />
-      ) : (
-        <>
+    <div className="bg-gray-900 text-gray-200 p-6 rounded-lg shadow-md">
+      {/* Encabezado */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Users</h1>
+        {!showForm && (
           <button
             onClick={handleCreate}
-            className="mb-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
           >
             Create User
           </button>
-          <UserTable users={users} onEdit={handleEdit} onDelete={handleDelete} />
-        </>
+        )}
+      </div>
+
+      {/* Contenido */}
+      {showForm ? (
+        <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h2 className="text-lg font-bold text-white mb-4">
+            {editingUser ? 'Edit User' : 'Create User'}
+          </h2>
+          <UserForm
+            formData={formData}
+            setFormData={setFormData}
+            roles={roles} // Pasar los roles al formulario
+            onSubmit={handleSubmit}
+            onCancel={() => {
+              setShowForm(false);
+              setEditingUser(null);
+            }}
+          />
+        </div>
+      ) : (
+        <UserTable users={users} onEdit={handleEdit} onDelete={handleDelete} />
       )}
     </div>
   );

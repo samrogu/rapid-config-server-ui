@@ -80,28 +80,38 @@ const RolesPage = () => {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Roles</h1>
-      {showForm ? (
-        <RoleForm
-          formData={formData}
-          setFormData={setFormData}
-          onSubmit={handleSubmit}
-          onCancel={() => {
-            setShowForm(false);
-            setEditingRole(null);
-          }}
-        />
-      ) : (
-        <>
+    <div className="bg-gray-900 text-gray-200 p-6 rounded-lg shadow-md">
+      {/* Encabezado */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Roles</h1>
+        {!showForm && (
           <button
             onClick={handleCreate}
-            className="mb-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Create Role
           </button>
-          <RoleTable roles={roles} onEdit={handleEdit} onDelete={handleDelete} />
-        </>
+        )}
+      </div>
+
+      {/* Contenido */}
+      {showForm ? (
+        <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h2 className="text-lg font-bold text-white mb-4">
+            {editingRole ? 'Edit Role' : 'Create Role'}
+          </h2>
+          <RoleForm
+            formData={formData}
+            setFormData={setFormData}
+            onSubmit={handleSubmit}
+            onCancel={() => {
+              setShowForm(false);
+              setEditingRole(null);
+            }}
+          />
+        </div>
+      ) : (
+        <RoleTable roles={roles} onEdit={handleEdit} onDelete={handleDelete} />
       )}
     </div>
   );

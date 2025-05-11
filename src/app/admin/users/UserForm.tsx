@@ -1,71 +1,83 @@
 import React from 'react';
 
 const UserForm = ({ formData, setFormData, roles, onSubmit, onCancel }: any) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleRolesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
-    const updatedRoles = checked
-      ? [...formData.roles, value]
-      : formData.roles.filter((role: string) => role !== value);
-    setFormData({ ...formData, roles: updatedRoles });
-  };
-
   return (
-    <form onSubmit={onSubmit} className="mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form onSubmit={onSubmit} className="space-y-4">
+      {/* Campo Username */}
+      <div>
+        <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-1">
+          Username
+        </label>
         <input
           type="text"
+          id="username"
           name="username"
-          placeholder="Username"
-          value={formData.username}
+          placeholder="Enter username"
+          value={formData.username || ''}
           onChange={handleInputChange}
-          className="border border-gray-400 rounded-lg p-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
+      </div>
+
+      {/* Campo Password */}
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+          Password
+        </label>
         <input
           type="password"
+          id="password"
           name="password"
-          placeholder="Password"
-          value={formData.password}
+          placeholder="Enter password"
+          value={formData.password || ''}
           onChange={handleInputChange}
-          className="border border-gray-400 rounded-lg p-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
-        <div className="col-span-2">
-          <label className="block text-sm font-bold text-gray-900 mb-2">Roles</label>
-          <div className="flex flex-wrap gap-4">
-            {roles.map((role: any) => (
-              <label key={role.id} className="flex items-center">
-                <input
-                  type="checkbox"
-                  value={role.name}
-                  checked={formData.roles.includes(role.name)}
-                  onChange={handleRolesChange}
-                  className="mr-2"
-                />
-                {role.name}
-              </label>
-            ))}
-          </div>
-        </div>
       </div>
-      <div className="mt-4">
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+
+      {/* Campo Roles */}
+      <div>
+        <label htmlFor="roles" className="block text-sm font-medium text-gray-300 mb-1">
+          Roles
+        </label>
+        <select
+          id="roles"
+          name="roles"
+          value={formData.roles || ''}
+          onChange={handleInputChange}
+          className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
         >
-          Save
-        </button>
+          <option value="">Select a role</option>
+          {roles.map((role: any) => (
+            <option key={role.id} value={role.name}>
+              {role.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Botones de acción */}
+      <div className="flex justify-end space-x-4">
         <button
           type="button"
           onClick={onCancel}
-          className="ml-4 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+          className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
         >
           Cancel
+        </button>
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500"
+        >
+          Save
         </button>
       </div>
     </form>

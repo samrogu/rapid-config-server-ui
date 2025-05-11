@@ -7,31 +7,38 @@ const RoleForm = ({ formData, setFormData, onSubmit, onCancel }: any) => {
   };
 
   return (
-    <form onSubmit={onSubmit} className="mb-8">
-      <div className="grid grid-cols-1 gap-4">
+    <form onSubmit={onSubmit} className="space-y-4">
+      {/* Campo Name */}
+      <div>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+          Role Name
+        </label>
         <input
           type="text"
+          id="name"
           name="name"
-          placeholder="Role Name"
-          value={formData.name}
+          placeholder="Enter role name"
+          value={formData.name || ''}
           onChange={handleInputChange}
-          className="border border-gray-400 rounded-lg p-2 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
       </div>
-      <div className="mt-4">
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          Save
-        </button>
+
+      {/* Botones de acción */}
+      <div className="flex justify-end space-x-4">
         <button
           type="button"
           onClick={onCancel}
-          className="ml-4 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+          className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
         >
           Cancel
+        </button>
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500"
+        >
+          Save
         </button>
       </div>
     </form>
