@@ -330,6 +330,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         Roles Management
                       </Link>
                     </li>
+                    <li>
+                      <Link
+                        href="/admin/permissions"
+                        className="flex items-center p-2 text-gray-300 hover:text-white hover:bg-gray-600 rounded-lg"
+                      >
+                        <svg
+                          className="w-5 h-5 mr-2 text-gray-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-3-3v6m9-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Permissions
+                      </Link>
+                    </li>
                   </>
                 )}
               </ul>

@@ -19,6 +19,9 @@ const apiRoutes = {
     byOrganization: (organizationId: string) =>
       `${API_BASE_URL}/applications/organization/${organizationId}`,
   },
+  userPermissions: {
+    base: `${API_BASE_URL}/user-permissions`,
+  },
 };
 
 export default apiRoutes;
