@@ -96,11 +96,12 @@ const PermissionsPage = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     try {
       if (editingPerm) {
         await axiosInstance.put(`${apiRoutes.userPermissions.base}/${editingPerm.id}`, formData);
       } else {
+        console.log('Creating new permission:', formData);
+        console.log('API Route:', apiRoutes.userPermissions.base);
         await axiosInstance.post(apiRoutes.userPermissions.base, formData);
       }
       setShowForm(false);

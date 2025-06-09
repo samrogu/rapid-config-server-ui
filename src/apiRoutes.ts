@@ -20,7 +20,7 @@ const apiRoutes = {
       `${API_BASE_URL}/applications/organization/${organizationId}`,
   },
   userPermissions: {
-    base: `${API_BASE_URL}/user-permissions`,
+    base: `${API_BASE_URL}/permissions`,
   },
 };
 
