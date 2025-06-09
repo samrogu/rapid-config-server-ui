@@ -103,7 +103,7 @@ const PermissionsPage = () => {
       } else {
         console.log('Creating new permission:', formData);
         console.log('API Route:', apiRoutes.userPermissions.base);
-        await axiosInstance.post(apiRoutes.userPermissions.base, formData);
+        await axiosInstance.post(`${apiRoutes.userPermissions.base}/create`, formData);
       }
       setShowForm(false);
       setEditingPerm(null);
