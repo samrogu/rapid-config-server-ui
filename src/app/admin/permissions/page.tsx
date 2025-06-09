@@ -96,6 +96,7 @@ const PermissionsPage = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       if (editingPerm) {
         await axiosInstance.put(`${apiRoutes.userPermissions.base}/${editingPerm.id}`, formData);
