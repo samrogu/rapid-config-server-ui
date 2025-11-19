@@ -1,9 +1,11 @@
+import { OrganizationUser } from '@/types/models';
+
 const UsersTable = ({
   users,
   onAdd,
   onRemove,
 }: {
-  users: any[];
+  users: OrganizationUser[];
   onAdd: () => void;
   onRemove: (id: string) => void;
 }) => {

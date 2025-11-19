@@ -1,271 +1,206 @@
 import React from 'react';
+import Input from './Input';
+import Select from './Select';
+import Checkbox from './Checkbox';
+import SecretInput from './SecretInput';
 
-const ApplicationForm = ({ formData, setFormData, onSubmit, onCancel }: any) => {
+import { Application } from '@/types/models';
+
+interface ApplicationFormProps {
+  formData: Partial<Application>;
+  setFormData: (data: Partial<Application>) => void;
+  onSubmit: (e: React.FormEvent) => void;
+  onCancel: () => void;
+}
+
+const ApplicationForm = ({ formData, setFormData, onSubmit, onCancel }: ApplicationFormProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
+    const target = e.target;
+    const { name, value } = target;
+
+    let newValue: string | boolean = value;
+    if (target.type === 'checkbox') {
+      newValue = (target as HTMLInputElement).checked;
+    }
+
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: newValue,
     });
   };
+
+  const vaultAuthMethodOptions = [
+    { value: 'TOKEN', label: 'Token' },
+    { value: 'APPROLE', label: 'AppRole' },
+    { value: 'USERPASS', label: 'UserPass' },
+  ];
 
   return (
     <form onSubmit={onSubmit} className="mb-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Campo Name */}
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Enter application name"
-            value={formData.name || ''}
-            onChange={handleInputChange}
-            className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+        <Input
+          label="Name"
+          id="name"
+          name="name"
+          placeholder="Enter application name"
+          value={formData.name || ''}
+          onChange={handleInputChange}
+          required
+        />
 
         {/* Campo Description */}
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-1">
-            Description
-          </label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            placeholder="Enter application description"
-            value={formData.description || ''}
-            onChange={handleInputChange}
-            className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+        <Input
+          label="Description"
+          id="description"
+          name="description"
+          placeholder="Enter application description"
+          value={formData.description || ''}
+          onChange={handleInputChange}
+          required
+        />
 
         {/* Campo URI */}
-        <div>
-          <label htmlFor="uri" className="block text-sm font-medium text-gray-300 mb-1">
-            URI
-          </label>
-          <input
-            type="text"
-            id="uri"
-            name="uri"
-            placeholder="Enter application URI"
-            value={formData.uri || ''}
-            onChange={handleInputChange}
-            className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+        <Input
+          label="URI"
+          id="uri"
+          name="uri"
+          placeholder="Enter application URI"
+          value={formData.uri || ''}
+          onChange={handleInputChange}
+          required
+        />
 
         {/* Campo Profile */}
-        <div>
-          <label htmlFor="profile" className="block text-sm font-medium text-gray-300 mb-1">
-            Profile
-          </label>
-          <input
-            type="text"
-            id="profile"
-            name="profile"
-            placeholder="Enter profile"
-            value={formData.profile || ''}
-            onChange={handleInputChange}
-            className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        <Input
+          label="Profile"
+          id="profile"
+          name="profile"
+          placeholder="Enter profile"
+          value={formData.profile || ''}
+          onChange={handleInputChange}
+        />
 
         {/* Campo Label */}
-        <div>
-          <label htmlFor="label" className="block text-sm font-medium text-gray-300 mb-1">
-            Label
-          </label>
-          <input
-            type="text"
-            id="label"
-            name="label"
-            placeholder="Enter label"
-            value={formData.label || ''}
-            onChange={handleInputChange}
-            className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        <Input
+          label="Label"
+          id="label"
+          name="label"
+          placeholder="Enter label"
+          value={formData.label || ''}
+          onChange={handleInputChange}
+        />
 
         {/* Campo Enabled */}
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="enabled"
-            name="enabled"
-            checked={formData.enabled || false}
-            onChange={handleInputChange}
-            className="mr-2"
-          />
-          <label htmlFor="enabled" className="text-gray-300">
-            Enabled
-          </label>
-        </div>
+        <Checkbox
+          label="Enabled"
+          id="enabled"
+          name="enabled"
+          checked={formData.enabled || false}
+          onChange={handleInputChange}
+        />
 
         {/* Campo Vault Enabled */}
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="vaultEnabled"
-            name="vaultEnabled"
-            checked={formData.vaultEnabled || false}
-            onChange={handleInputChange}
-            className="mr-2"
-          />
-          <label htmlFor="vaultEnabled" className="text-gray-300">
-            Vault Enabled
-          </label>
-        </div>
+        <Checkbox
+          label="Vault Enabled"
+          id="vaultEnabled"
+          name="vaultEnabled"
+          checked={formData.vaultEnabled || false}
+          onChange={handleInputChange}
+        />
 
         {/* Campos adicionales si Vault está habilitado */}
         {formData.vaultEnabled && (
           <>
             {/* Campo Vault URL */}
-            <div>
-              <label htmlFor="vaultUrl" className="block text-sm font-medium text-gray-300 mb-1">
-                Vault URL
-              </label>
-              <input
-                type="text"
-                id="vaultUrl"
-                name="vaultUrl"
-                placeholder="Enter Vault URL"
-                value={formData.vaultUrl || ''}
-                onChange={handleInputChange}
-                className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
+            <Input
+              label="Vault URL"
+              id="vaultUrl"
+              name="vaultUrl"
+              placeholder="Enter Vault URL"
+              value={formData.vaultUrl || ''}
+              onChange={handleInputChange}
+              required
+            />
 
-            <div>
-              <label htmlFor="vaultAuthMethod" className="block text-sm font-medium text-gray-300 mb-1">
-                Vault Auth Method
-              </label>
-              <select
-                id="vaultAuthMethod"
-                name="vaultAuthMethod"
-                value={formData.vaultAuthMethod || ''}
-                onChange={handleInputChange}
-                className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              >
-                <option value="">Select Vault Auth Method</option>
-                <option value="TOKEN">Token</option>
-                <option value="APPROLE">AppRole</option>
-                <option value="USERPASS">UserPass</option>
-              </select>
-            </div>
+            <Select
+              label="Vault Auth Method"
+              id="vaultAuthMethod"
+              name="vaultAuthMethod"
+              value={formData.vaultAuthMethod || ''}
+              onChange={handleInputChange}
+              options={vaultAuthMethodOptions}
+              defaultOptionLabel="Select Vault Auth Method"
+              required
+            />
 
-            <div>
-              <label htmlFor="secretEngine" className="block text-sm font-medium text-gray-300 mb-1">
-                Secret Engine
-              </label>
-              <input
-                type="text"
-                id="secretEngine"
-                name="secretEngine"
-                placeholder="Enter secret engine"
-                value={formData.secretEngine || ''}
-                onChange={handleInputChange}
-                className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
+            <Input
+              label="Secret Engine"
+              id="secretEngine"
+              name="secretEngine"
+              placeholder="Enter secret engine"
+              value={formData.secretEngine || ''}
+              onChange={handleInputChange}
+              required
+            />
 
             {/* Campos condicionales según el método de autenticación */}
             {formData.vaultAuthMethod === 'TOKEN' && (
-              <div>
-                <label htmlFor="vaultToken" className="block text-sm font-medium text-gray-300 mb-1">
-                  Vault Token
-                </label>
-                <input
-                  type="text"
-                  id="vaultToken"
-                  name="vaultToken"
-                  placeholder="Enter vault token"
-                  value={formData.vaultToken || ''}
-                  onChange={handleInputChange}
-                  className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
+              <SecretInput
+                label="Vault Token"
+                id="vaultToken"
+                name="vaultToken"
+                placeholder="Enter vault token"
+                value={formData.vaultToken || ''}
+                onChange={handleInputChange}
+                required
+              />
             )}
 
             {formData.vaultAuthMethod === 'APPROLE' && (
               <>
-                <div>
-                  <label htmlFor="appRoleId" className="block text-sm font-medium text-gray-300 mb-1">
-                    AppRole ID
-                  </label>
-                  <input
-                    type="text"
-                    id="appRoleId"
-                    name="appRoleId"
-                    placeholder="Enter AppRole ID"
-                    value={formData.appRoleId || ''}
-                    onChange={handleInputChange}
-                    className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="appRoleSecret" className="block text-sm font-medium text-gray-300 mb-1">
-                    AppRole Secret
-                  </label>
-                  <input
-                    type="text"
-                    id="appRoleSecret"
-                    name="appRoleSecret"
-                    placeholder="Enter AppRole Secret"
-                    value={formData.appRoleSecret || ''}
-                    onChange={handleInputChange}
-                    className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
+                <Input
+                  label="AppRole ID"
+                  id="appRoleId"
+                  name="appRoleId"
+                  placeholder="Enter AppRole ID"
+                  value={formData.appRoleId || ''}
+                  onChange={handleInputChange}
+                  required
+                />
+                <Input
+                  label="AppRole Secret"
+                  id="appRoleSecret"
+                  name="appRoleSecret"
+                  placeholder="Enter AppRole Secret"
+                  value={formData.appRoleSecret || ''}
+                  onChange={handleInputChange}
+                  required
+                />
               </>
             )}
 
             {formData.vaultAuthMethod === 'USERPASS' && (
               <>
-                <div>
-                  <label htmlFor="vaultUsername" className="block text-sm font-medium text-gray-300 mb-1">
-                    Vault Username
-                  </label>
-                  <input
-                    type="text"
-                    id="vaultUsername"
-                    name="vaultUsername"
-                    placeholder="Enter Vault Username"
-                    value={formData.vaultUsername || ''}
-                    onChange={handleInputChange}
-                    className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="vaultPassword" className="block text-sm font-medium text-gray-300 mb-1">
-                    Vault Password
-                  </label>
-                  <input
-                    type="password"
-                    id="vaultPassword"
-                    name="vaultPassword"
-                    placeholder="Enter Vault Password"
-                    value={formData.vaultPassword || ''}
-                    onChange={handleInputChange}
-                    className="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
+                <Input
+                  label="Vault Username"
+                  id="vaultUsername"
+                  name="vaultUsername"
+                  placeholder="Enter Vault Username"
+                  value={formData.vaultUsername || ''}
+                  onChange={handleInputChange}
+                  required
+                />
+                <Input
+                  label="Vault Password"
+                  id="vaultPassword"
+                  name="vaultPassword"
+                  placeholder="Enter Vault Password"
+                  value={formData.vaultPassword || ''}
+                  onChange={handleInputChange}
+                  type="password" // Explicitly set type for password input
+                  required
+                />
               </>
             )}
           </>

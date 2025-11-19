@@ -16,7 +16,7 @@ export default function AuthGuard({ children, requireAuth = true }: AuthGuardPro
     const token = localStorage.getItem('token');
     const isLoginPage = pathname === '/login';
 
-    if (!token && requireAuth) {
+    if (!token && requireAuth && !isLoginPage) {
       // Si no hay token y la ruta requiere autenticación
       router.push('/login');
     } else if (token && isLoginPage) {

@@ -1,8 +1,5 @@
 'use client';
 
-import { Menu } from '@headlessui/react';
-import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
-
 const OrganizationHeader = ({
   name,
   children,
