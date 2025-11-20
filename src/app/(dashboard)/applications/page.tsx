@@ -83,9 +83,16 @@ const ApplicationsPage = () => {
     setFormVisible(true);
   };
 
-  const organizationMap = useMemo(() => {
+const organizationMap = useMemo(() => {
     return organizations.reduce((acc, org) => {
       acc[org.id] = org.name;
+      return acc;
+    }, {} as Record<string, string>);
+  }, [organizations]);
+
+  const organizationUidMap = useMemo(() => {
+    return organizations.reduce((acc, org) => {
+      acc[org.id] = org.uid;
       return acc;
     }, {} as Record<string, string>);
   }, [organizations]);
@@ -117,7 +124,7 @@ const ApplicationsPage = () => {
       </span>
       <div className="absolute inset-0 rounded-lg bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-150"></div>
     </button>
-  ), []);
+  ), [setFormVisible, setEditingApplication, setNewApplication]);
 
   const { setLayoutInfo } = useLayout();
 
@@ -155,6 +162,13 @@ const ApplicationsPage = () => {
         header: 'Organization',
         render: (app: Application) => (
             <div className="text-sm text-gray-400">{organizationMap[app.organizationId]}</div>
+        )
+    },
+    {
+        key: 'consumptionUrl',
+        header: 'Consumption URL',
+        render: (app: Application) => (
+            <div className="text-sm text-gray-400">{`${window.location.origin}/config/v1/${organizationUidMap[app.organizationId]}/${app.uid}`}</div>
         )
     }
   ];

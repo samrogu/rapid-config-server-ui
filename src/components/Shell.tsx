@@ -86,7 +86,7 @@ const SidebarContent = ({ handleLogout }: { handleLogout: () => void }) => {
     return (
         <div className="flex flex-col h-full bg-gray-800 text-white">
             <div className={`p-4 flex items-center justify-between`}>
-                <Link href="/applications">
+                <Link href="/organizations">
                     <Image
                         src="/RapidConfigLogo.png"
                         alt="Rapid Config"

@@ -13,8 +13,8 @@ const Breadcrumb = () => {
         <nav className="flex" aria-label="Breadcrumb">
             <ol role="list" className="flex items-center space-x-1 text-xs text-gray-400">
                 <li>
-                    <Link href="/dashboard" className="capitalize hover:text-white transition-colors">
-                        Dashboard
+                    <Link href="/organizations" className="capitalize hover:text-white transition-colors">
+                        Organizations
                     </Link>
                 </li>
                 {segments.map((segment, index) => {

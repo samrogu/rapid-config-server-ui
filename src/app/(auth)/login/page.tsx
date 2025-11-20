@@ -35,7 +35,7 @@ export default function LoginPage() {
       localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
 
       // Forzar un reload de la página para que se actualice el estado
-      window.location.href = '/dashboard';
+      window.location.href = '/organizations';
     } catch {
       setError('Invalid username or password');
     }

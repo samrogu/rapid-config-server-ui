@@ -134,7 +134,7 @@ const OrganizationsPage = () => {
           </div>
           <div className="ml-4">
             <div className="text-sm font-medium text-white">{org.name}</div>
-            <div className="text-sm text-gray-400">UID: {(org as any).uid}</div>
+            <div className="text-sm text-gray-400">UID: {org.uid}</div>
           </div>
         </div>
       ),
