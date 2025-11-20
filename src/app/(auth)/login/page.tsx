@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import apiRoutes from '@/apiRoutes';
 import { AuthResponse } from '@/types/auth';
+import Input from '@/components/Input';
+import { Button } from '@/components/Button';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -40,79 +42,107 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-900">
-      {/* Sección izquierda */}
-      <div className="hidden lg:flex flex-col justify-between bg-gray-800 text-gray-200 p-8 w-1/3">
-        <div>
+    <div className="flex min-h-screen bg-gray-950 text-white">
+      {/* Left Section - Info & Branding */}
+      <div className="hidden lg:flex flex-col justify-between lg:w-1/2 bg-gradient-to-br from-blue-900 to-gray-900 p-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+        <div className="relative z-10">
           <Image
             src="/RapidConfigLogo.png"
-            alt="Spring Config Logo"
-            width={360}
-            height={140}
+            alt="Rapid Config Server Logo"
+            width={240}
+            height={80}
             className="mb-8"
+            priority
           />
-          <p className="text-lg font-medium text-gray-300">
-            Manage and streamline your Spring Boot application configurations effortlessly with Rapid Config Server.
+          <h2 className="text-4xl font-bold mb-6 leading-tight">
+            Manage your configurations <br />
+            <span className="text-blue-400">with speed and precision.</span>
+          </h2>
+          <p className="text-lg text-gray-300 max-w-md">
+            Streamline your Spring Boot application configurations effortlessly.
+            Centralized, secure, and rapid.
           </p>
         </div>
-        <div>
+        <div className="relative z-10">
           <p className="text-sm text-gray-400">
-            Copyright © 2025 <span className="font-semibold text-gray-300">SaguroDev</span>
+            &copy; 2025 <span className="font-semibold text-white">SaguroDev</span>. All rights reserved.
           </p>
         </div>
       </div>
 
-      {/* Sección derecha */}
-      <div className="flex flex-col justify-center items-center flex-1 bg-gray-900 p-8">
-        <div className="max-w-md w-full bg-gray-800 shadow-lg rounded-lg p-8">
-          <h1 className="text-2xl font-bold text-gray-200 mb-4">Welcome back!</h1>
-          <p className="text-sm text-gray-400 mb-6">
-            Please enter your credentials to sign in!
-          </p>
+      {/* Right Section - Login Form */}
+      <div className="flex flex-col justify-center items-center w-full lg:w-1/2 bg-gray-950 p-4 sm:p-8 relative">
+        <div className="w-full max-w-sm space-y-8">
+          <div className="text-center">
+            <Image
+              src="/RapidIcon.png"
+              alt="Rapid Config"
+              width={64}
+              height={64}
+              className="mx-auto mb-4 lg:hidden"
+            />
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+              Welcome back
+            </h2>
+            <p className="mt-2 text-sm text-gray-400">
+              Please enter your credentials to sign in
+            </p>
+          </div>
 
-          {/* Formulario */}
-          <form onSubmit={handleLogin}>
-            <div className="mb-4">
-              <label className="block text-sm font-bold text-gray-300 mb-1">
-                User Name
-              </label>
-              <input
-                type="text"
-                placeholder="admin"
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 sm:p-8 shadow-2xl">
+            <form onSubmit={handleLogin} className="space-y-6">
+              <Input
+                label="Username"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-200 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                 required
+                className="bg-gray-800/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
               />
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-bold text-gray-300 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-200 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-            >
-              Sign In
-            </button>
-          </form>
 
-          <p className="mt-2 text-center text-sm text-gray-400">
-            Or{' '}
-            <a href="#" className="font-medium text-blue-500 hover:text-blue-400">
-              contact your administrator
-            </a>{' '}
-            if you don&apos;t have an account.
+              <div className="space-y-1">
+                <Input
+                  label="Password"
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="bg-gray-800/50 border-gray-700 focus:border-blue-500 focus:ring-blue-500/20"
+                />
+                <div className="flex justify-end">
+                  <a href="#" className="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors">
+                    Forgot password?
+                  </a>
+                </div>
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
+                  {error}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                variant="primary"
+                className="w-full py-2.5 text-base font-semibold shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-200"
+              >
+                Sign In
+              </Button>
+            </form>
+          </div>
+
+          <p className="text-center text-sm text-gray-500">
+            Don&apos;t have an account?{' '}
+            <a href="#" className="font-medium text-blue-400 hover:text-blue-300 transition-colors">
+              Contact administrator
+            </a>
           </p>
         </div>
       </div>
