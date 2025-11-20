@@ -1,23 +1,25 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import axiosInstance from '@/axiosConfig'; // Importa la configuración de Axios
+import axiosInstance from '@/axiosConfig';
 import apiRoutes from '@/apiRoutes';
 import { useRouter } from 'next/navigation';
 import { useLayout } from '@/contexts/LayoutContext';
 import Table from '@/components/Table';
 import { Organization } from '@/types/models';
+import ConfirmModal from '@/components/ConfirmModal';
 
 const OrganizationsPage = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [formVisible, setFormVisible] = useState(false);
-  const [newOrganization, setNewOrganization] = useState({ name: '' }); // Estado para el formulario
+  const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
+  const [organizationToDelete, setOrganizationToDelete] = useState<Organization | null>(null);
+  const [newOrganization, setNewOrganization] = useState({ name: '' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const router = useRouter();
 
-  // Fetch organizations
   const fetchOrganizations = async () => {
     try {
       const response = await axiosInstance.get(apiRoutes.organizations.base);
@@ -39,17 +41,51 @@ const OrganizationsPage = () => {
     e.preventDefault();
     try {
       await axiosInstance.post(apiRoutes.organizations.base, newOrganization);
-      setFormVisible(false); // Ocultar el formulario
-      setNewOrganization({ name: '' }); // Reiniciar el formulario
-      fetchOrganizations(); // Refrescar la lista de organizaciones
+      setFormVisible(false);
+      setNewOrganization({ name: '' });
+      fetchOrganizations();
     } catch (error) {
       console.error('Error adding organization:', error);
     }
   };
 
+  const handleEditOrganization = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingOrganization) return;
+    try {
+      await axiosInstance.put(`${apiRoutes.organizations.base}/${editingOrganization.id}`, editingOrganization);
+      setFormVisible(false);
+      setEditingOrganization(null);
+      fetchOrganizations();
+    } catch (error) {
+      console.error('Error editing organization:', error);
+    }
+  };
+
+  const handleDeleteOrganization = async () => {
+    if (!organizationToDelete) return;
+    try {
+      await axiosInstance.delete(`${apiRoutes.organizations.base}/${organizationToDelete.id}`);
+      setOrganizationToDelete(null);
+      fetchOrganizations();
+    } catch (error) {
+      console.error('Error deleting organization:', error);
+    }
+  };
+
+  const openEditForm = (org: Organization) => {
+    setEditingOrganization(org);
+    setNewOrganization({ name: org.name });
+    setFormVisible(true);
+  };
+
   const actionButton = useMemo(() => (
     <button
-      onClick={() => setFormVisible(true)}
+      onClick={() => {
+        setFormVisible(true);
+        setEditingOrganization(null);
+        setNewOrganization({ name: '' });
+      }}
       className="group relative inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-medium rounded-lg shadow-lg hover:shadow-blue-500/25 transition-all duration-150 ease-in-out"
     >
       <span className="relative flex items-center gap-2">
@@ -98,7 +134,6 @@ const OrganizationsPage = () => {
           </div>
           <div className="ml-4">
             <div className="text-sm font-medium text-white">{org.name}</div>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <div className="text-sm text-gray-400">UID: {(org as any).uid}</div>
           </div>
         </div>
@@ -109,7 +144,6 @@ const OrganizationsPage = () => {
       header: 'Applications',
       render: (org: Organization) => (
         <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-900 text-blue-200">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {(org as any).applicationsCount || 0} apps
         </div>
       ),
@@ -131,16 +165,46 @@ const OrganizationsPage = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
         </svg>
       ),
+      className: 'bg-blue-600 hover:bg-blue-700',
+    },
+    {
+      label: 'Edit',
+      onClick: openEditForm,
+      icon: (
+        <svg
+            className="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" />
+        </svg>
+      ),
+      className: 'bg-yellow-500 hover:bg-yellow-600',
+    },
+    {
+      label: 'Delete',
+      onClick: (org: Organization) => setOrganizationToDelete(org),
+      icon: (
+        <svg
+            className="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      ),
+      className: 'bg-red-500 hover:bg-red-600',
     },
   ];
 
   return (
     <>
-      {/* Add Organization Form */}
       {formVisible && (
         <div className="mb-6 bg-gray-800 p-4 rounded-lg">
-          <h2 className="text-xl font-bold mb-4">Add Organization</h2>
-          <form onSubmit={handleAddOrganization} className="space-y-4">
+          <h2 className="text-xl font-bold mb-4">{editingOrganization ? 'Edit Organization' : 'Add Organization'}</h2>
+          <form onSubmit={editingOrganization ? handleEditOrganization : handleAddOrganization} className="space-y-4">
             <div>
               <label htmlFor="name" className="block text-sm font-bold mb-2">
                 Organization Name
@@ -159,11 +223,14 @@ const OrganizationsPage = () => {
                 type="submit"
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
               >
-                Save
+                {editingOrganization ? 'Save Changes' : 'Save'}
               </button>
               <button
                 type="button"
-                onClick={() => setFormVisible(false)}
+                onClick={() => {
+                  setFormVisible(false);
+                  setEditingOrganization(null);
+                }}
                 className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
               >
                 Cancel
@@ -185,6 +252,15 @@ const OrganizationsPage = () => {
           onPageChange: setCurrentPage,
         }}
       />
+
+      {organizationToDelete && (
+        <ConfirmModal
+          title="Delete Organization"
+          message={`Are you sure you want to delete the organization "${organizationToDelete.name}"?`}
+          onConfirm={handleDeleteOrganization}
+          onCancel={() => setOrganizationToDelete(null)}
+        />
+      )}
     </>
   );
 };
