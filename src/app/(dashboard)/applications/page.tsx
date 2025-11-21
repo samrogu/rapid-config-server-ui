@@ -73,8 +73,12 @@ const ApplicationsPage = () => {
     e.preventDefault();
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id, ...rest } = applicationFormData;
-      await axiosInstance.post(apiRoutes.applications.base, rest);
+      const { id, organizationId, ...rest } = applicationFormData;
+      if (!organizationId) {
+        console.error('Organization ID is required to create an application');
+        return;
+      }
+      await axiosInstance.post(apiRoutes.applications.byOrganization(organizationId), rest);
       setFormVisible(false);
       setApplicationFormData(initialApplicationFormData);
       fetchApplications();
