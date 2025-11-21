@@ -32,6 +32,7 @@ const RoleTable = ({ roles, onEdit, onDelete, pagination }: RoleTableProps) => {
         </svg>
       ),
       className: 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500',
+      shouldShow: (role: Role) => role.editable !== false, // Mostrar solo si editable es true o undefined
     },
     {
       label: 'Delete',
@@ -52,6 +53,7 @@ const RoleTable = ({ roles, onEdit, onDelete, pagination }: RoleTableProps) => {
         </svg>
       ),
       className: 'bg-red-600 hover:bg-red-700 focus:ring-red-500',
+      shouldShow: (role: Role) => role.editable !== false, // Mostrar solo si editable es true o undefined
     },
   ];
 

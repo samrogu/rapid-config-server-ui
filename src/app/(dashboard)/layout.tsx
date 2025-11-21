@@ -3,6 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { LayoutProvider } from '@/contexts/LayoutContext';
+import { AuthProvider } from '@/contexts/AuthContext';
 import Shell from '@/components/Shell';
 
 const DashboardContent = ({ children }: { children: React.ReactNode }) => {
@@ -27,8 +28,10 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <LayoutProvider>
-            <DashboardContent>{children}</DashboardContent>
-        </LayoutProvider>
+        <AuthProvider>
+            <LayoutProvider>
+                <DashboardContent>{children}</DashboardContent>
+            </LayoutProvider>
+        </AuthProvider>
     );
 }

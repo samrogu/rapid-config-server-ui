@@ -11,36 +11,48 @@ interface SecretInputProps {
   required?: boolean;
   className?: string;
   label?: string;
+  containerClassName?: string;
 }
 
-const SecretInput = ({ id, name, placeholder, value, onChange, required = false, className = '', label = '' }: SecretInputProps) => {
+const SecretInput = ({
+  id,
+  name,
+  placeholder,
+  value,
+  onChange,
+  required = false,
+  className = '',
+  label = '',
+  containerClassName = ''
+}: SecretInputProps) => {
   const [isRevealed, setIsRevealed] = useState(false);
 
   return (
-    <div className="relative">
-      <Input
-        id={id}
-        name={name}
-        type={isRevealed ? 'text' : 'password'}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        required={required}
-        label={label}
-        className={`pr-10 ${className}`} // Add padding-right for the eye icon
-      />
-      <button
-        type="button"
-        onClick={() => setIsRevealed(!isRevealed)}
-        className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-white"
-      >
-        {isRevealed ? (
-          <EyeSlashIcon className="h-5 w-5" />
-        ) : (
-          <EyeIcon className="h-5 w-5" />
-        )}
-      </button>
-    </div>
+    <Input
+      id={id}
+      name={name}
+      type={isRevealed ? 'text' : 'password'}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      required={required}
+      label={label}
+      className={className}
+      containerClassName={containerClassName}
+      rightElement={
+        <button
+          type="button"
+          onClick={() => setIsRevealed(!isRevealed)}
+          className="text-gray-400 hover:text-white focus:outline-none"
+        >
+          {isRevealed ? (
+            <EyeSlashIcon className="h-5 w-5" />
+          ) : (
+            <EyeIcon className="h-5 w-5" />
+          )}
+        </button>
+      }
+    />
   );
 };
 

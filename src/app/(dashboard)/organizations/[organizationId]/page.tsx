@@ -161,12 +161,7 @@ const OrganizationDetailsPage = () => {
   return (
     <div className="bg-gray-900 text-gray-200 p-6 rounded-lg shadow-md">
       {/* Breadcrumb */}
-      <Breadcrumb
-        items={[
-          { label: 'Organizations', href: '/organizations' },
-          { label: organization?.name || 'Loading...' },
-        ]}
-      />
+      <Breadcrumb />
 
       {/* Organization Header */}
       {isEditing ? (

@@ -31,7 +31,7 @@ const RolesPage = () => {
   }, []);
 
   const handleCreate = () => {
-    setFormData({ name: '' });
+    setFormData({ name: '', editable: true });
     setShowForm(true);
   };
 

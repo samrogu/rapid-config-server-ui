@@ -35,7 +35,7 @@ const Select = ({
 }: SelectProps) => {
   return (
     <div className={containerClassName}>
-      <label htmlFor={id} className={`block text-sm font-medium text-gray-300 mb-1 ${labelClassName}`}>
+      <label htmlFor={id} className={`block text-sm font-medium text-gray-300 mb-2 ${labelClassName}`}>
         {label}
       </label>
       <select
@@ -44,7 +44,7 @@ const Select = ({
         value={value}
         onChange={onChange}
         required={required}
-        className={`w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`w-full bg-gray-800/50 border border-gray-700 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all ${className}`}
         {...rest}
       >
         <option value="" disabled>{defaultOptionLabel}</option>

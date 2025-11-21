@@ -30,7 +30,7 @@ export default function LoginPage() {
 
       const data: AuthResponse = await response.json();
 
-      // Guardar en localStorage
+      // Guardar en localStorage - incluye permissions y admin
       localStorage.setItem('token', data.token);
       localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
 

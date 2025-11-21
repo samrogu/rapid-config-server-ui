@@ -1,24 +1,28 @@
 import { JSX } from "react";
 
 interface ConfirmModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
+  onCancel?: () => void;
   onConfirm: () => void;
   title: string;
   message: string | JSX.Element;
-  confirmText: string;
-  confirmButtonClass: string;
+  confirmText?: string;
+  confirmButtonClass?: string;
 }
 
 const ConfirmModal = ({
-  isOpen,
+  isOpen = true,
   onClose,
+  onCancel,
   onConfirm,
   title,
   message,
   confirmText = 'Confirm',
   confirmButtonClass = 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
 }: ConfirmModalProps) => {
+  const handleCancel = onCancel || onClose;
+
   if (!isOpen) return null;
 
   return (
@@ -28,7 +32,7 @@ const ConfirmModal = ({
         <div className="mb-6">{message}</div>
         <div className="flex justify-end space-x-4">
           <button
-            onClick={onClose}
+            onClick={handleCancel}
             className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
           >
             Cancel

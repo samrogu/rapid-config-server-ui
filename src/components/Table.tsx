@@ -16,6 +16,7 @@ interface TableProps<T> {
     onClick: (item: T) => void;
     icon?: React.ReactNode;
     className?: string;
+    shouldShow?: (item: T) => boolean; // Nueva propiedad para controlar visibilidad
   }[];
   emptyStateMessage?: string;
   emptyStateDescription?: string;
@@ -30,11 +31,11 @@ const Table = <T extends { id: string | number }>(
   { data, columns, actions, emptyStateMessage, emptyStateDescription, pagination }: TableProps<T>
 ) => {
   return (
-    <div className="mt-4 bg-gray-800 rounded-lg overflow-hidden shadow-xl flex flex-col">
+    <div className="mt-4 bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-700 bg-gray-800 text-gray-300">
+            <tr className="border-b border-gray-800 bg-gray-900/50 text-gray-300">
               {columns.map((column) => (
                 <th key={column.key} className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${column.headerClassName || ''}`}>
                   {column.header}
@@ -45,11 +46,11 @@ const Table = <T extends { id: string | number }>(
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700">
+          <tbody className="divide-y divide-gray-800">
             {data.map((item) => (
               <tr
                 key={item.id}
-                className="hover:bg-gray-700/50 transition-colors duration-150 ease-in-out"
+                className="hover:bg-gray-800/50 transition-all duration-200 ease-in-out"
               >
                 {columns.map((column) => (
                   <td key={`${item.id}-${column.key}`} className={`px-6 py-4 whitespace-nowrap ${column.className || ''}`}>
@@ -59,16 +60,18 @@ const Table = <T extends { id: string | number }>(
                 ))}
                 {actions && actions.length > 0 && (
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                    {actions.map((action, index) => (
-                      <button
-                        key={index}
-                        onClick={() => action.onClick(item)}
-                        className={`inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white ${action.className || 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'} transition-colors duration-150 ease-in-out`}
-                      >
-                        {action.icon}
-                        {action.label}
-                      </button>
-                    ))}
+                    {actions
+                      .filter(action => !action.shouldShow || action.shouldShow(item))
+                      .map((action, index) => (
+                        <button
+                          key={index}
+                          onClick={() => action.onClick(item)}
+                          className={`inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white ${action.className || 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'} transition-colors duration-150 ease-in-out`}
+                        >
+                          {action.icon}
+                          {action.label}
+                        </button>
+                      ))}
                   </td>
                 )}
               </tr>
@@ -100,7 +103,7 @@ const Table = <T extends { id: string | number }>(
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-700 sm:px-6">
+        <div className="bg-gray-900/50 backdrop-blur-xl px-4 py-3 flex items-center justify-between border-t border-gray-800 sm:px-6">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
               onClick={() => pagination.onPageChange(Math.max(1, pagination.currentPage - 1))}

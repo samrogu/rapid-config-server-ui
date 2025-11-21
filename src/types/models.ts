@@ -3,6 +3,7 @@ export interface Organization {
   uid: string;
   name: string;
   description: string;
+  applicationsCount?: number;
 }
 
 export interface Application {
@@ -24,6 +25,8 @@ export interface Application {
   vaultAuthMethod?: string;
   vaultUsername?: string;
   vaultPassword?: string;
+  vaultSchema?: string;
+  vaultPort?: number;
 }
 
 export interface User {
@@ -36,6 +39,7 @@ export interface Role {
   id: string;
   name: string;
   description: string;
+  editable?: boolean;
 }
 
 export interface Permission {
